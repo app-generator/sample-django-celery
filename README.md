@@ -46,7 +46,6 @@ Visit `http://localhost:5085` in your browser. The app should be up & running.
 
 <br />
 
-
 ## ✨ How to use it
 
 > Download the code 
@@ -120,6 +119,10 @@ $ python manage.py runserver
 At this point, the app runs at `http://127.0.0.1:8000/`. 
 
 <br />
+
+## ✨ Start Celery Manager
+
+@Todo 
 
 ## ✨ Create Users
 
