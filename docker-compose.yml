@@ -20,6 +20,18 @@ services:
       - web_network
     depends_on: 
       - appseed-app
+  celery:
+    build: .
+    command: celery --app=core worker
+    env_file: .env
+    environment:
+      - CELERY_BROKER=redis://redis:6379/0
+      - CELERY_BACKEND=redis://redis:6379/0
+    depends_on:
+      - redis
+
+  redis:
+    image: redis:6-alpine
 networks:
   db_network:
     driver: bridge

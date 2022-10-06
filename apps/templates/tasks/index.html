@@ -80,6 +80,9 @@
                   <tbody>
 
                     <!-- Running Task -->
+                    {% for task in  tasks %}
+                      
+                    
                     <tr>
                       <td>
                         <div class="d-flex px-2 py-1">
@@ -88,7 +91,7 @@
                           </div>
                           <div class="d-flex flex-column justify-content-center">
                             <h6 class="mb-0 text-sm">
-                              Task 1
+                              {{task}}
                             </h6>
                             <p class="text-xs text-secondary mb-0">
                               Short task info
@@ -130,7 +133,8 @@
                       </td>
                       {% endif %}
                     </tr>
-
+                  {% endfor %}
+<!-- 
                     <!-- Task finished OK -->
                     <tr>
                       <td>
@@ -285,7 +289,7 @@
                         </a>
                       </td>
                       {% endif %}   
-                    </tr>
+                    </tr> -->
 
                   </tbody>
                 </table>

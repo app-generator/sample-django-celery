@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_celery_results',
     'apps.tasks',                  # Tasks 
     'apps.home'                    # Enable the inner home (home)
 ]
@@ -144,6 +145,19 @@ STATICFILES_DIRS = (
     os.path.join(CORE_DIR, 'apps/static'),
 )
 
+
+# Celery configurations
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://redis:6379/0")
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_BROKER", "redis://redis:6379/0")
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60
+CELERY_CACHE_BACKEND = "django-cache"
+CELERY_RESULT_BACKEND = "django-db"
+CELERY_RESULT_EXTENDED = True
+CELERY_RESULT_EXPIRES = 60*60*24*30
+CELERY_ACCEPT_CONTENT=["json"]
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
 
 #############################################################
 #############################################################

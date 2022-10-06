@@ -9,3 +9,7 @@ sqlparse==0.4.2
 toml==0.10.2
 whitenoise==5.3.0
 django-environ==0.8.1
+django-celery-results==2.4.0
+celery==5.2.7
+redis==4.3.4
+hiredis==2.0.0
