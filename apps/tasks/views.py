@@ -16,11 +16,22 @@ from celery.contrib.abortable import AbortableAsyncResult
 import time
 from core.celery import app
 
+from django.conf import settings
+from os import listdir
+from os.path import isfile, join
+
+def get_scripts():
+    return [f for f in listdir(settings.CELERY_SCRIPTS_DIR) if isfile(join(settings.CELERY_SCRIPTS_DIR, f))] 
 
 @login_required(login_url="/login/")
 def tasks(request):
-    context = {'segment': 'tasks','tasks':get_celery_all_tasks()}
+    context = {'segment': 'tasks',
+               'tasks':get_celery_all_tasks(), 
+               'scripts':get_scripts()} 
 
+    # Todo List ITEMS from table:
+    # django_celery_results_task_result           
+    
     html_template = loader.get_template('tasks/index.html')
     return HttpResponse(html_template.render(context, request))
 
