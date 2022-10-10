@@ -8,8 +8,6 @@ from django.utils.timezone import datetime
 from django.conf import settings
 import time
 
-
-
 @app.task(bind=True,base=AbortableTask)
 def users_in_db(self):
     users=User.objects.all()
