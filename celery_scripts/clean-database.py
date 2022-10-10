@@ -9,7 +9,10 @@ import sys
 def main():
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
     print("Cleaning Database ...")
-    raise ValueError("Error")
+    
+    # Simulate error
+    # raise ValueError("Error")
+    
     try:
         
         print(' EXEC -> ' + os.path.basename(__file__)) 
