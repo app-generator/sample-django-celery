@@ -5,6 +5,8 @@ services:
     restart: always
     env_file: .env
     build: .
+    volumes:
+      - .:/app
     networks:
       - db_network
       - web_network
@@ -20,6 +22,28 @@ services:
       - web_network
     depends_on: 
       - appseed-app
+  celery:
+    build: .
+    command: celery --app=core worker -E
+    env_file: .env
+    environment:
+      - CELERY_BROKER=redis://redis:6379
+      - CELERY_BACKEND=redis://redis:6379
+    volumes:
+      - .:/app
+    depends_on:
+      - redis
+    networks:
+      - web_network
+
+  redis:
+    image: redis:6-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning
+    networks:
+      - web_network
 networks:
   db_network:
     driver: bridge
