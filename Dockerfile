@@ -9,7 +9,11 @@ COPY requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . .
+
+
+COPY . /app
+
+WORKDIR /app
 
 # running migrations
 RUN python manage.py migrate
