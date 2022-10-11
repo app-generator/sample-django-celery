@@ -9,10 +9,11 @@ from django.conf import settings
 from os import listdir
 from os.path import isfile, join
 
-
 def get_scripts():
+    """
+    Returns all scripts from 'ROOT_DIR/celery_scripts'
+    """
     return [f for f in listdir(settings.CELERY_SCRIPTS_DIR) if isfile(join(settings.CELERY_SCRIPTS_DIR, f))]
-
 
 @app.task(bind=True, base=AbortableTask)
 def users_in_db(self, data: dict):
@@ -22,9 +23,7 @@ def users_in_db(self, data: dict):
     :rtype: None
     """
     users = User.objects.all()
-    time.sleep(12)
     return {"output": "\n".join([u.email for u in users])}
-
 
 @app.task(bind=True, base=AbortableTask)
 def execute_script(self, data: dict):
