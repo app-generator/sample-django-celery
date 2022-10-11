@@ -157,15 +157,10 @@ CELERY_TASK_TIME_LIMIT    = 30 * 60
 CELERY_CACHE_BACKEND      = "django-cache"
 CELERY_RESULT_BACKEND     = "django-db"
 CELERY_RESULT_EXTENDED    = True
-CELERY_RESULT_EXPIRES     = 60*60*24*30
+CELERY_RESULT_EXPIRES     = 60*60*24*30 # Results expire after 1 month
 CELERY_ACCEPT_CONTENT     = ["json"]
 CELERY_TASK_SERIALIZER    = 'json'
 CELERY_RESULT_SERIALIZER  = 'json'
-CELERY_SCRIPTS            ={
-    "check-db-health":"check-db-health.py",
-    "check-disk-free":"check-disk-free.py",
-    "clean-database":"clean-database.py",
-}
 
 #############################################################
 #############################################################
