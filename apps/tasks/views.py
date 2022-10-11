@@ -3,18 +3,21 @@
 Copyright (c) 2019 - present AppSeed.us
 """
 
+import os, time, json
+from os import listdir
+from os.path import isfile, join
+
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http      import HttpResponse
 from django.shortcuts import redirect
-from django.template import loader
+from django.template  import loader
+from django.conf      import settings
+
 from celery import current_app
 from .tasks import execute_script, users_in_db, get_scripts
 from django_celery_results.models import TaskResult
 from celery.contrib.abortable import AbortableAsyncResult
-import time
 from core.celery import app
-import json
-
 
 @login_required(login_url="/login/")
 def tasks(request):
@@ -84,3 +87,42 @@ def get_celery_all_tasks():
                 task["input"] = json.loads(last_task.result).get("input")
 
     return tasks
+
+def task_output(request, task_id):
+    '''
+    Returns a task output 
+    '''
+    task = TaskResult.objects.get(id=task_id)
+
+    if not task:
+        return ''
+
+    # task.result -> JSON Format
+    return HttpResponse( task.result )
+
+def task_log(request, task_id):
+    '''
+    Returns a task LOG file (if located on disk) 
+    '''
+    task     = TaskResult.objects.get(id=task_id)
+    task_log = 'NOT FOUND'
+
+    if not task: 
+        return ''
+
+    # Get logs file
+    all_logs = [f for f in listdir(settings.CELERY_LOGS_DIR) if isfile(join(settings.CELERY_LOGS_DIR, f))]
+    
+    for log in all_logs:
+
+        # Task HASH name is saved in the log name
+        if task.task_id in log:
+            
+            with open( os.path.join( settings.CELERY_LOGS_DIR, log) ) as f:
+                
+                # task_log -> JSON Format
+                task_log = f.readlines() 
+
+            break    
+
+    return HttpResponse(task_log)
