@@ -24,7 +24,7 @@
               <p>
                 Superusers are able to create/cancel tasks.
                 <br />
-                Ordinary users can only view execution logs and running tasks (no other interactions are allowed).
+                Ordinary users can only view execution logs and running tasks (no other interactions allowed).
               </p>
 
             </div>
@@ -46,7 +46,7 @@
                     <tr>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Script</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Status</th>
+                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Latest Status</th>
                       <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                         Input
                       </th>
@@ -82,7 +82,7 @@
                               {{task.name}}
                             </h6>
                             <p class="text-xs text-secondary mb-0">
-                              Short task info
+                              Celery Task
                             </p>
                           </div>
                         </div>
@@ -98,7 +98,7 @@
                       <td class="align-middle text-center text-sm">
 
                         {% if task.status == "STARTED" %}
-                          <span class="badge badge-sm bg-gradient-success">RUNNING</span>
+                          <span class="badge badge-sm bg-gradient-warning">RUNNING</span>
                         {% elif task.status == "FAILURE" %}
                           <span class="badge badge-sm bg-gradient-danger">FINISHED</span>
                         {% elif task.status == "REVOKED" %}
@@ -143,18 +143,20 @@
                           <button href="javascript:;" class="text-danger font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
                             Cancel Task
                           </button>
+
                         {% elif task.status == "FAILURE" or task.status == "REVOKED" %}
+                            
                             <button href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
-                              Restart
+                              Execute
                             </button>
 
                         {% else %}
-                          <button href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
-                            Restart
-                          </button>
-                        {% endif %}
 
-                      
+                          <button href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
+                            Execute
+                          </button>
+
+                        {% endif %}
 
                       </td>
                       {% endif %}
@@ -186,7 +188,7 @@
                     <tr>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Task</th>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Input</th>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Status</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7 ps-2">Status</th>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7 ps-2">Start TS</th>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7 ps-2">End TS</th>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7 ps-2">Output</th>
@@ -215,7 +217,13 @@
                         </td>
 
                         <td class="align-middle">
-                          <p class="text-sm mb-0">{{result.status}}</p>
+                          <p class="text-sm 
+                                    {% if result.status == 'SUCCESS' %} text-success {% endif %}
+                                    {% if result.status == 'FAILURE' %} text-danger  {% endif %} 
+                                    {% if result.status == 'STARTED' %} text-warning {% endif %}
+                                    text-center mb-0">
+                            {{result.status}}
+                          </p>
                         </td>
                         
                         <td class="align-middle">
@@ -231,7 +239,7 @@
                         </td>   
                         <td class="">
                           <p class="text-sm text-center mb-0">
-                            <a onclick="viewLog( {{result.id}} );" href="#">View Log</a>  
+                            <a onclick="viewLog( {{result.id}} );" href="#">View LOG</a>  
                           </p>
                         </td>                                               
 
