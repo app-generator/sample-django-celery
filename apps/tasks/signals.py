@@ -1,16 +1,31 @@
 from django_celery_results.models import TaskResult
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 from django.conf import settings
 import os
+import json
 
-@receiver(post_save, sender=TaskResult)
-def result_updated(sender, **kwargs):
+
+@receiver(pre_save, sender=TaskResult)
+def pre_result_updated(sender, **kwargs):
     if 'instance' not in kwargs:
         return
-    result=kwargs.pop("instance")
-    if result.status!="STARTED":
-        add_log(result)
+    instance=kwargs.pop("instance")
+    if instance.status!="STARTED":
+        result=json.loads(instance.result)
+        if result.get("error"):
+            instance.status="FAILURE"
+            instance.traceback=result.get("logs")
+        
+
+
+@receiver(post_save, sender=TaskResult)
+def post_result_updated(sender, **kwargs):
+    if 'instance' not in kwargs:
+        return
+    instance=kwargs.pop("instance")
+    if instance.status!="STARTED":
+        add_log(instance)
 
 
 def add_log(result:TaskResult):
@@ -21,7 +36,12 @@ def add_log(result:TaskResult):
     """
     if not result.task_name:
         return
-    log_file_path=os.path.join(settings.CELERY_LOGS_DIR,f"{result.date_created.strftime(r'%Y%m%d-%H%M%S')}-{result.task_name}-{result.status}-{result.id}.log")
+    _input= json.loads(result.result).get("input")
+    if _input:
+        log_file_path=os.path.join(settings.CELERY_LOGS_DIR,f"{result.date_created.strftime(r'%Y%m%d-%H%M%S')}-{result.task_name}-{_input}-{result.status}-{result.id}.log")
+
+    else:
+        log_file_path=os.path.join(settings.CELERY_LOGS_DIR,f"{result.date_created.strftime(r'%Y%m%d-%H%M%S')}-{result.task_name}-{result.status}-{result.id}.log")
     with open(log_file_path,"w+") as f:
         if result.status=="FAILURE":
             f.writelines([result.result,result.traceback])

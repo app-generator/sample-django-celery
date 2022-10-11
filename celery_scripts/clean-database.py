@@ -11,7 +11,7 @@ def main():
     print("Cleaning Database ...")
     
     # Simulate error
-    # raise ValueError("Error")
+    raise ValueError("Error")
     
     try:
         

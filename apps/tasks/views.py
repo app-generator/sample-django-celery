@@ -3,25 +3,19 @@
 Copyright (c) 2019 - present AppSeed.us
 """
 
-import imp
-from django import template
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.template import loader
 from celery import current_app
-from .tasks import execute_script, users_in_db
+from .tasks import execute_script, users_in_db, get_scripts
 from django_celery_results.models import TaskResult
 from celery.contrib.abortable import AbortableAsyncResult
 import time
 from core.celery import app
+import json
 
-from django.conf import settings
-from os import listdir
-from os.path import isfile, join
 
-def get_scripts():
-    return [f for f in listdir(settings.CELERY_SCRIPTS_DIR) if isfile(join(settings.CELERY_SCRIPTS_DIR, f))] 
 
 @login_required(login_url="/login/")
 def tasks(request):
@@ -29,21 +23,19 @@ def tasks(request):
                'tasks':get_celery_all_tasks(), 
                'scripts':get_scripts()} 
 
-    # Todo List ITEMS from table:
-    # django_celery_results_task_result           
+    # django_celery_results_task_result    
+    task_results=TaskResult.objects.all()
+    context["task_results"]=task_results       
     
     html_template = loader.get_template('tasks/index.html')
     return HttpResponse(html_template.render(context, request))
 
 def run_task(request,task_name):
     tasks=[execute_script,users_in_db]
-
+    _input=request.POST.get("input")
     for task in tasks:
         if task.__name__==task_name:
-            if task.__name__==execute_script.__name__:
-                task.delay({"script":request.POST.get("script")})
-            else:
-                task.delay()
+            task.delay({"input":_input})
     time.sleep(1)
 
     return redirect("tasks")
@@ -77,6 +69,8 @@ def get_celery_all_tasks():
             task["date_created"]=last_task.date_created
             task["date_done"]=last_task.date_done
             task["result"]=last_task.result
+            if last_task.result:
+                task["input"]=json.loads(last_task.result).get("input")
 
 
 

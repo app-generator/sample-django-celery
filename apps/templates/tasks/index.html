@@ -61,8 +61,16 @@
                   <tbody>
 
                     <!-- Running Task -->
-                    {% for task in  tasks %}                     
+                    {% for task in  tasks %}    
+                    {% if task.status == "STARTED" %}
+                    <form action="{% url 'cancel-task' task.id %}" method="post">
+                    {% else %}
+                    <form action="{% url 'run-task' task.name %}" method="post">
+                      
+                    {% endif %}  
+
                     
+                      {% csrf_token %}
                     <tr>
                       <td>
                         <div class="d-flex px-2 py-1">
@@ -105,9 +113,13 @@
                           
                           {% if task.name == 'execute_script' %}
 
-                            <select class="form-control">
+                            <select class="form-control" name="input" 
+                            {% if task.status == "STARTED" %}
+                            disabled
+                            {% endif %}
+                            >
                               {% for item in scripts %}
-                                <option>{{ item }}</option>
+                                <option value="{{item}}" {% if item == task.input %}selected{% endif %}>{{ item }}</option>
                               {% endfor %}
                             </select>
                           
@@ -127,29 +139,19 @@
                       <td class="align-middle text-center">
 
                         {% if task.status == "STARTED" %}
-                        <form action="{% url 'cancel-task' task.id %}" method="post">
-                          {% csrf_token %}
+
                           <button href="javascript:;" class="text-danger font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
                             Cancel Task
                           </button>
-                        </form>
                         {% elif task.status == "FAILURE" or task.status == "REVOKED" %}
-                          <form action="{% url 'run-task' task.name %}" method="post">
-                            {% csrf_token %}
-                            <input type="hidden" name="script" value="clean-database">
                             <button href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
                               Restart
                             </button>
-                          </form>
 
                         {% else %}
-                        <form action="{% url 'run-task' task.name %}" method="post">
-                          {% csrf_token %}
-                          <input type="hidden" name="script" value="clean-database">
                           <button href="javascript:;" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit user">
                             Restart
                           </button>
-                        </form>
                         {% endif %}
 
                       
@@ -157,6 +159,7 @@
                       </td>
                       {% endif %}
                     </tr>
+                    </form>
                   {% endfor %}
 
                   </tbody>
@@ -190,38 +193,39 @@
                     </tr>
                   </thead>
                   <tbody>
+                    {% for result in task_results %}
+                      <tr>
 
-                    <tr>
-
-                      <td>
-                        <div class="d-flex px-2">
-                          <div class="my-auto">
-                            <h6 class="mb-0 text-sm">Spotify</h6>
+                        <td>
+                          <div class="d-flex px-2">
+                            <div class="my-auto">
+                              <h6 class="mb-0 text-sm">{{result.task_name}}</h6>
+                            </div>
                           </div>
-                        </div>
-                      </td>
+                        </td>
 
-                      <td class="align-middle">
-                        <p class="text-sm mb-0">Input</p>
-                      </td>
+                        <td class="align-middle">
+                          <p class="text-sm mb-0">{{result|get_result_field:"input"}}</p>
+                        </td>
 
-                      <td class="align-middle">
-                        <p class="text-sm mb-0">Status</p>
-                      </td>
-                      
-                      <td class="align-middle">
-                        <p class="text-sm text-center mb-0">Start TS</p>
-                      </td>
-                      
-                      <td class="align-middle">
-                        <p class="text-sm text-center mb-0">END TS</p>
-                      </td>      
-                      
-                      <td class="">
-                        <p class="text-sm text-center mb-0">Output</p>
-                      </td>                         
+                        <td class="align-middle">
+                          <p class="text-sm mb-0">{{result.status}}</p>
+                        </td>
+                        
+                        <td class="align-middle">
+                          <p class="text-sm text-center mb-0">{{result.date_created|date_format}}</p>
+                        </td>
+                        
+                        <td class="align-middle">
+                          <p class="text-sm text-center mb-0">{{result.date_done|date_format}}</p>
+                        </td>      
+                        
+                        <td class="">
+                          <p class="text-sm text-center mb-0">{{result|get_result_field:"output"}}</p>
+                        </td>                         
 
-                    </tr>
+                      </tr>
+                    {% endfor %}
 
                   </tbody>
                 </table>
