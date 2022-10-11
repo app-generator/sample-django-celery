@@ -13,8 +13,10 @@ env = environ.Env(
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 CORE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 CELERY_SCRIPTS_DIR = os.path.join(BASE_DIR,"celery_scripts")
-CELERY_LOGS_DIR = os.path.join(BASE_DIR,"celery_logs")
+CELERY_LOGS_DIR    = os.path.join(BASE_DIR,"celery_logs")
+
 # Take environment variables from .env file
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
@@ -150,8 +152,8 @@ STATICFILES_DIRS = (
 # Celery configurations
 # https://docs.celeryq.dev/en/stable/django/first-steps-with-django.html
 
-CELERY_BROKER_URL         = os.environ.get("CELERY_BROKER", "redis://redis:6379")
-CELERY_RESULT_BACKEND     = os.environ.get("CELERY_BROKER", "redis://redis:6379")
+CELERY_BROKER_URL         = os.environ.get("CELERY_BROKER", "redis://localhost:6379")
+CELERY_RESULT_BACKEND     = os.environ.get("CELERY_BROKER", "redis://localhost:6379")
 CELERY_TASK_TRACK_STARTED = True
 CELERY_TASK_TIME_LIMIT    = 30 * 60
 CELERY_CACHE_BACKEND      = "django-cache"
