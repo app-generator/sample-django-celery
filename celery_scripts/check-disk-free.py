@@ -8,14 +8,17 @@ import sys
 
 def main():
 
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
-    
     try:
         
         print(' EXEC -> ' + os.path.basename(__file__)) 
+        
+        # Unix ErrCode
+        exit(0)
 
     except Exception as e:
+
         print( 'Err: ' + str( e ) )
+        exit(1)
 
 if __name__ == '__main__':
     main()
