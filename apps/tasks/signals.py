@@ -42,6 +42,8 @@ def add_log(result: TaskResult):
     """
     if not result.task_name:
         return
+
+    '''    
     _input = json.loads(result.result).get("input")
     if _input:
         log_file_path = os.path.join(
@@ -50,6 +52,11 @@ def add_log(result: TaskResult):
     else:
         log_file_path = os.path.join(
             settings.CELERY_LOGS_DIR, f"{result.date_created.strftime(r'%Y%m%d-%H%M%S')}-{result.task_name}-{result.status}-{result.id}.log")
+    '''
+
+    log_file_path = os.path.join(
+            settings.CELERY_LOGS_DIR, f"{result.date_created.strftime(r'%Y%m%d-%H_%M')}-{result.task_id}-{result.status}.log")
+
     with open(log_file_path, "w+") as f:
         if result.status == "FAILURE":
             f.writelines([result.result, result.traceback])
