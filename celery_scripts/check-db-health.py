@@ -7,7 +7,9 @@ import os
 import sys
 
 def main():
+
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'core.settings')
+    
     try:
         
         print(' EXEC -> ' + os.path.basename(__file__)) 
