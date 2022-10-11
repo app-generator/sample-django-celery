@@ -176,7 +176,7 @@
           <div class="card mb-4">
             <div class="card-header pb-0">
               <h6>
-                LOGS -> [ django_celery_results_task_result ]
+                LOGS
               </h6>
             </div>
             <div class="card-body px-0 pt-0 pb-2">
@@ -190,6 +190,7 @@
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7 ps-2">Start TS</th>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7 ps-2">End TS</th>
                       <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7 ps-2">Output</th>
+                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder text-center opacity-7 ps-2">Logs</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -199,7 +200,12 @@
                         <td>
                           <div class="d-flex px-2">
                             <div class="my-auto">
-                              <h6 class="mb-0 text-sm">{{result.task_name}}</h6>
+                              <h6 class="mb-0 text-sm">
+                                {{result.id}} - {{result.task_name}}
+                              </h6>
+                              <p class="text-xs text-secondary mb-0">
+                                {{result.task_id}}
+                              </p>
                             </div>
                           </div>
                         </td>
@@ -222,7 +228,12 @@
                         
                         <td class="">
                           <p class="text-sm text-center mb-0">{{result|get_result_field:"output"}}</p>
-                        </td>                         
+                        </td>   
+                        <td class="">
+                          <p class="text-sm text-center mb-0">
+                            <a onclick="viewLog( {{result.id}} );" href="#">View Log</a>  
+                          </p>
+                        </td>                                               
 
                       </tr>
                     {% endfor %}
@@ -238,8 +249,50 @@
       {% include "includes/footer.html" %}
 
     </div>
-    
+
+    <div class="modal fade" 
+         id="log-modal" tabindex="-1" role="dialog" aria-labelledby="modal-default" aria-hidden="true">
+      <div class="modal-dialog modal- modal-dialog-centered modal-" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h6 class="modal-title mx-auto" id="modal-title-default">
+              Task LOG
+            </h6>
+          </div>
+          <div class="modal-body">
+            <p id="log-content">
+            </p>
+          </div>
+          <div class="modal-footer text-center">
+            <button type="button" class="btn btn-link mx-auto" data-bs-dismiss="modal">Dismiss</button>
+          </div>
+        </div>
+      </div>
+    </div>  
+
 {% endblock content %}
 
 <!-- Specific JS goes HERE --> 
-{% block javascripts %}{% endblock javascripts %}
+{% block javascripts %}
+
+<script>
+
+var logsModal      = new bootstrap.Modal(document.getElementById("log-modal"), {});
+var logFileContent = document.getElementById("log-content");
+
+function viewLog( aId ) {
+  //console.log(' > LOG ' + aId );
+
+  fetch('/tasks/log/' + aId)
+      .then((response) => response.json())
+      .then((data) => { 
+        console.log( data );
+        logFileContent.textContent = JSON.stringify( data ); 
+        logsModal.show();
+      })
+      .catch((err)     => { console.log(err.toString()) }); 
+}
+
+</script>
+
+{% endblock javascripts %}
