@@ -13,8 +13,8 @@ env = environ.Env(
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 CORE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-CELERY_SCRIPTS_DIR=os.path.join(BASE_DIR,"celery_scripts")
-CELERY_LOGS_DIR=os.path.join(BASE_DIR,"celery_logs")
+CELERY_SCRIPTS_DIR = os.path.join(BASE_DIR,"celery_scripts")
+CELERY_LOGS_DIR = os.path.join(BASE_DIR,"celery_logs")
 # Take environment variables from .env file
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
