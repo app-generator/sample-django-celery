@@ -31,8 +31,7 @@ def tasks(request):
     context["task_results"] = task_results
 
     html_template = loader.get_template('tasks/index.html')
-    return HttpResponse(html_template.render(context, request))
-
+    return HttpResponse(html_template.render(context, request)) 
 
 def run_task(request, task_name):
     '''
@@ -48,8 +47,7 @@ def run_task(request, task_name):
             task.delay({"input": _input})
     time.sleep(1)  # Waiting for task status to update in db
 
-    return redirect("tasks")
-
+    return redirect("tasks") 
 
 def cancel_task(request, task_id):
     '''
@@ -65,7 +63,6 @@ def cancel_task(request, task_id):
         abortable_result.revoke(terminate=True)
     time.sleep(1)
     return redirect("tasks")
-
 
 def get_celery_all_tasks():
     current_app.loader.import_default_modules()
@@ -88,11 +85,13 @@ def get_celery_all_tasks():
 
     return tasks
 
-def task_output(request, task_id):
+def task_output(request):
     '''
     Returns a task output 
     '''
-    task = TaskResult.objects.get(id=task_id)
+
+    task_id = request.GET.get('task_id')
+    task    = TaskResult.objects.get(id=task_id)
 
     if not task:
         return ''
@@ -100,10 +99,12 @@ def task_output(request, task_id):
     # task.result -> JSON Format
     return HttpResponse( task.result )
 
-def task_log(request, task_id):
+def task_log(request):
     '''
     Returns a task LOG file (if located on disk) 
     '''
+
+    task_id  = request.GET.get('task_id')
     task     = TaskResult.objects.get(id=task_id)
     task_log = 'NOT FOUND'
 
