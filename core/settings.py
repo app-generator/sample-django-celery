@@ -14,9 +14,6 @@ env = environ.Env(
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 CORE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-CELERY_SCRIPTS_DIR = os.path.join(BASE_DIR,"celery_scripts")
-CELERY_LOGS_DIR    = os.path.join(BASE_DIR,"celery_logs")
-
 # Take environment variables from .env file
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
@@ -42,9 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django_celery_results',
-    'apps.tasks',                  # Tasks 
-    'apps.home'                    # Enable the inner home (home)
+    'apps.home',                    
+    'django_tm',                  # Django Tasks Manager 
+    'django_celery_results',      # Django Celery Results
 ]
 
 MIDDLEWARE = [
@@ -151,6 +148,9 @@ STATICFILES_DIRS = (
 #############################################################
 # Celery configurations
 # https://docs.celeryq.dev/en/stable/django/first-steps-with-django.html
+
+CELERY_SCRIPTS_DIR        = os.path.join(BASE_DIR, "django_tm", "celery_scripts" )
+CELERY_LOGS_DIR           = os.path.join(BASE_DIR, "django_tm", "celery_logs"    )
 
 CELERY_BROKER_URL         = os.environ.get("CELERY_BROKER", "redis://localhost:6379")
 CELERY_RESULT_BACKEND     = os.environ.get("CELERY_BROKER", "redis://localhost:6379")
