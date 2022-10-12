@@ -100,7 +100,7 @@ At this point, the app runs at `http://127.0.0.1:8000/`.
 > Note: `Redis` server is expected on port `6379` (default)
 
 ```bash
-$ celery --app=core.celery.app worker --loglevel=info 
+$ celery --app=django_tm.celery.app worker --loglevel=info 
 ```
 
 ### 👉 Set Up for `Windows` 
