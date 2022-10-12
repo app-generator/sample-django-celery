@@ -58,12 +58,14 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'core.urls'
 LOGIN_REDIRECT_URL = "home"  # Route defined in home/urls.py
 LOGOUT_REDIRECT_URL = "home"  # Route defined in home/urls.py
-TEMPLATE_DIR = os.path.join(CORE_DIR, "apps/templates")  # ROOT dir for templates
+
+TEMPLATE_DIR       = os.path.join(CORE_DIR, "apps/templates")       # ROOT dir for templates
+TEMPLATE_DIR_TASKS = os.path.join(BASE_DIR, "django_tm/templates")  # Django Tasks Templates 
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [TEMPLATE_DIR],
+        'DIRS': [TEMPLATE_DIR, TEMPLATE_DIR_TASKS],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -143,6 +145,7 @@ STATIC_URL = '/static/'
 # Extra places for collectstatic to find static files.
 STATICFILES_DIRS = (
     os.path.join(CORE_DIR, 'apps/static'),
+    os.path.join(BASE_DIR, "django_tm/templates/static"),
 )
 
 #############################################################
